@@ -1,0 +1,16 @@
+.active{
+    font-size: 13px !important;
+    background-color: #EF233C !important;
+    color: #fff !important;
+    padding: 2px 16px !important;
+    top: -8px !important;
+    left: 16px !important;
+    font-weight: bold !important;
+}
+
+.formactive{
+    transform: rotateZ(0deg) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 100;
+}
