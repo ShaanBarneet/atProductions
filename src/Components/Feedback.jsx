@@ -4,9 +4,11 @@ import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import EmailIcon from "@mui/icons-material/Email";
 import MessageIcon from "@mui/icons-material/Message";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
-import './styles.css'
+import "./styles.css";
 import { useState } from "react";
 import classNames from "classnames";
+import { send } from "emailjs-com";
+
 const Container = styled.div`
   box-sizing: border-box;
 `;
@@ -29,20 +31,29 @@ const ContactIcon = styled.div`
   bottom: 40px;
   right: 50px;
   cursor: pointer;
-  padding: 16px;
+  /* padding: 0px 15px 15px 15px; */
+  background-color: #dfdfdc;
+  /* border: 2px solid red; */
+  border-radius: 50%;
+  height: 60px;
+  width: 60px;
 `;
 const I = styled.i`
-  font-size: 42px;
+  font-size: 35px;
   color: #003049;
   transition: all 300ms ease;
+  padding: 0%;
   &:hover {
     transform: scale(1.1);
   }
+  /* border: 2px solid red;
+  height: 100%;
+  width: 100px; */
 `;
 
 const Heading = styled.h3`
   font-size: 30px;
-  color: #003049;
+  color: white;
   margin-top: 10px;
   position: relative;
   &::after {
@@ -66,9 +77,8 @@ const Label = styled.label`
   left: 36px;
   color: #003049;
   border-left: 8px solid white;
-    border-right: 8px solid white;
-    transition: all 300ms ease;
-
+  border-right: 8px solid white;
+  transition: all 300ms ease;
 `;
 
 const Icon = styled.i`
@@ -90,6 +100,10 @@ const Input = styled.input`
   &:focus {
     outline: none;
   }
+
+  &::placeholder {
+    color: #003049;
+  }
 `;
 const TextArea = styled.textarea`
   width: 100%;
@@ -104,6 +118,9 @@ const TextArea = styled.textarea`
   resize: none;
   &:focus {
     outline: none;
+  }
+  &::placeholder {
+    color: #003049;
   }
 `;
 
@@ -123,50 +140,104 @@ const Button = styled.button`
   }
 `;
 
-
-
 function Feedback() {
-    const [isOpened,setIsOpened] = useState(false);
-    var formContainerClasses = classNames({
-        'formactive': isOpened
-      });
+  const [isOpened, setIsOpened] = useState(false);
+  var formContainerClasses = classNames({
+    formactive: isOpened,
+  });
 
-      useEffect(() => {
-        console.log(formContainerClasses)
-      },[isOpened]);
-    
+  const [toSend, setToSend] = useState({
+    name: '',
+    message: '',
+    email: '',
+  });
+
+  useEffect(() => {
+    console.log(formContainerClasses);
+  }, [isOpened]);
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    send(
+      'service_wadrmkq',
+      'template_sqyycjm',
+      toSend,
+      'DkojK9MKsuWs04K9e'
+    )
+      .then((response) => {
+        console.log('SUCCESS!', response.status, response.text);
+        setIsOpened(!isOpened);
+      })
+      .catch((err) => {
+        console.log('FAILED...', err);
+      });
+  };
+
+  const handleChange = (e) => {
+    setToSend({ ...toSend, [e.target.name]: e.target.value });
+  };
+
   return (
     <Container>
       <FormContainer className={formContainerClasses}>
         <Heading>AT Productions</Heading>
-        <Form>
+        <Form onSubmit={onSubmit}>
           <FieldContainer>
             <Icon>
               <DriveFileRenameOutlineIcon></DriveFileRenameOutlineIcon>
             </Icon>
-            <Label for="name">Name</Label>
-            <Input className="form-input" type="text" id="name" />
+            {/* <Label for="name">Name</Label> */}
+            <Input
+              className="form-input"
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Name"
+              value={toSend.name}
+              onChange={handleChange}
+            />
           </FieldContainer>
           <FieldContainer>
             <Icon>
               <EmailIcon></EmailIcon>
             </Icon>
-            <Label for="email">Email</Label>
-            <Input className="form-input" type="text" id="email" />
+            {/* <Label for="email">Email</Label> */}
+            <Input
+              className="form-input"
+              type="text"
+              name="email"
+              id="email"
+              placeholder="Email"
+              value={toSend.email}
+              onChange={handleChange}
+            />
           </FieldContainer>
           <FieldContainer>
             <Icon>
               <MessageIcon></MessageIcon>
             </Icon>
-            <Label for="message">Message</Label>
-            <TextArea className="form-input" id="message" cols="30" rows="10"></TextArea>
+            {/* <Label for="message">Message</Label> */}
+            <TextArea
+              className="form-input"
+              id="message"
+              name="message"
+              cols="30"
+              rows="10"
+              placeholder="Message"
+              value={toSend.message}
+              onChange={handleChange}
+            ></TextArea>
           </FieldContainer>
-          <Button>Send</Button>
+          <Button  type='submit'>Send</Button>
         </Form>
       </FormContainer>
-      <ContactIcon className="contact-icon" onClick={() => {
-        console.log('Hiiii',isOpened);
-        setIsOpened(!isOpened)}}>
+      <ContactIcon
+        className="contact-icon"
+        onClick={() => {
+          console.log("Hiiii", isOpened);
+          setIsOpened(!isOpened);
+        }}
+      >
         <I>
           <ChatBubbleIcon />
         </I>
